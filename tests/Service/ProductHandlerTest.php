@@ -62,7 +62,26 @@ class ProductHandlerTest extends TestCase
             $price = $product['price'] ?: 0;
             $totalPrice += $price;
         }
-
+        $totalPrice = ProductHandler::getTotalPrice($this->products);
         $this->assertEquals(143, $totalPrice);
+    }
+
+    public function testFilterTypeAndSortByPrice()
+    {
+        $products = ProductHandler::filterTypeAndSortByPrice($this->products, 'Dessert');
+        for($i = 1; $i < count($products); $i++) {
+            $this->assertGreaterThan($products[$i]['price'], $products[$i-1]['price']);
+        }
+        foreach ($products as $product) {
+            $this->assertEquals('Dessert', $product['type']);
+        }
+    }
+
+    public function testFormatProductTime()
+    {
+        $products = ProductHandler::formatProductTime($this->products);
+        foreach ($products as $key => $product) {
+            $this->assertEquals($product['create_at'], strtotime($this->products[$key]['create_at']));
+        }
     }
 }
